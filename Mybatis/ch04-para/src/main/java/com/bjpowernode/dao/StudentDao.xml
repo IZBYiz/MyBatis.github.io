@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjpowernode.dao.StudentDao">
+    <!-- parameterType：写在mapper文件中的一个属性，表示dao接口中方法的参数的数据类型
+            parameterType他的值是Java的数据类型权限定名称或者是mybatis定义的别名
+            列如：parameterType=“java.lang.Integer"
+                 parameterType="int"
+            注意：parameterType不是强制的，mybatis通过反射机制能够发现接口参数类型
+                 所以可以没有，一般我们也不写
+            返回一个简单的参数
+    -->
+<!--    resultType：表示结果类型，是SQL语句执行后得到ResulSet，遍历这个ResultSet得到Java对象的类型
+                    值写的类型的全限定名称(写的是domain中类的全部名称)-->
+   <select id="selectStudentById" parameterType="java.lang.Integer" resultType="com.bjpowernode.domain.Student">
+       select id,name,email,age from student where id=#{id};
+   </select>
+<!--    多个参数：命名参数，在形参=定义的面前加入@Param-->
+    <select id="selectMulitParam" resultType="com.bjpowernode.domain.Student">
+        select id,name,email,age from student where name=#{myname} or age=#{myage};
+    </select>
+<!--    多个参数使用java对象的多个属性值
+        使用对象语法：#{属性名，javaType=类型名称，jdbcType=数据类型}
+        javaType:指的是Java中的属性的数据类型
+        jdbcType：在数据库中的数据类型
+         private String paramName;
+         private Integer paramAge;
+       简化使用：#{属性名}  javaType，jdbcType的值mybatis通过反射能获取
+-->
+    <select id="selectMultiObject" resultType="com.bjpowernode.domain.Student">
+        select id,name,email,age from student where name=#{paramName,javaType=java.lang.String,jdbcType=VARCHAR}
+                                                 or age=#{paramAge,javaType=java.lang.Integer,jdbcType=INTEGER};
+        <!--这里的属性要和传入参数对象的名称一样-->
+    </select>
+
+<!--    多个参数使用位置-->
+    <select id="selectMultiPosition" resultType="com.bjpowernode.domain.Student">
+        select id,name,email,age from student where name=#{arg0} or age=#{arg1};
+    </select>
+
+ <!--    map-->
+    <select id="selectMultiMap" resultType="com.bjpowernode.domain.Student">
+        select id,name,email,age from student where name=#{myname} or age=#{myage};
+    </select>
+</mapper>

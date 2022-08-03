@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjpowernode.dao.StudentDao">
+
+    <!--代码片段-->
+    <sql id="StudentSql">
+        select id,name,age,email from student
+    </sql>
+
+
+    <!--if
+          <if test="使用参数Java对象属性值作为判断条件 语法 属性=xxx值">
+    -->
+    <select id="selectStudentIf" resultType="com.bjpowernode.domain.Student">
+        <include refid="StudentSql" />
+        where id>0
+        <if test="name !=null and name !=''">
+            name=#{name}
+        </if>
+        <if test="age > 0">
+            <!--and--> or age >#{age}
+        </if>
+    </select>
+
+
+    <!--where 用来包含多个 <if>的 当多个if有成立一个的 ，<where>标签会自动增加一个where关键字
+        并去掉if中多余的and ，or 等
+    -->
+    <select id="selectStudentWhere" resultType="com.bjpowernode.domain.Student">
+        select id,name,email,age from student
+      <where>
+          <if test="name !=null and name !=''">
+              name=#{name}
+          </if>
+          <if test="age > 0">
+              <!--and--> or age >#{age}
+          </if>
+      </where>
+    </select>
+
+    <!--foreach  循环Java中的数组，list集合 主要用来sql的in语句-->
+    <!--
+     collection:表示接口中的方法参数的类型， 如果是数组使用array , 如果是list集合使用list
+	 item:自定义的，表示数组和集合成员的变量
+	 open:循环开始是的字符
+	 close:循环结束时的字符
+     separator:集合成员之间的分隔符
+     -->
+    <select id="selectStudentForeachOne" resultType="com.bjpowernode.domain.Student">
+        select *from student where id in
+     <foreach collection="list" item="myid" open="(" close=")" separator=",">
+              #{myid}
+     </foreach>
+    </select>
+
+    <!--循环对象-->
+    <select id="selectStudentForeachTwo" resultType="com.bjpowernode.domain.Student">
+        select *from student where id in
+        <foreach collection="list" item="stu" open="(" close=")" separator=",">
+            #{stu.id}
+        </foreach>
+    </select>
+</mapper>
